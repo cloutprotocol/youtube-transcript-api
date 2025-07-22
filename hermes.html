@@ -431,6 +431,105 @@
             color: #666;
             margin-top: 15px;
         }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            input[type="text"] {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            button {
+                width: 100%;
+                margin: 5px 0 !important;
+                display: block;
+            }
+            
+            .input-section {
+                padding: 15px;
+            }
+            
+            .input-section button {
+                margin-top: 10px !important;
+            }
+            
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .action-buttons button {
+                width: 100%;
+                margin: 0 !important;
+            }
+            
+            .flashcards-header .action-buttons {
+                margin-top: 10px !important;
+            }
+            
+            .demo-controls button {
+                width: auto;
+                min-width: 120px;
+                margin: 5px !important;
+            }
+            
+            .video-container iframe {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16/9;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .transcript-container {
+                max-height: 400px;
+                padding: 15px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10px auto;
+                padding: 15px;
+            }
+            
+            .demo-option {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+                margin: 5px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .transcript-container {
+                max-height: 350px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -444,6 +543,7 @@
             <label for="videoId"><strong>Enter YouTube Video ID or URL:</strong></label><br><br>
             <input type="text" id="videoId" placeholder="Enter YouTube URL or ID" value="">
             <button onclick="fetchTranscript()">Fetch Transcript</button>
+            <button onclick="window.location.href='history.html'" style="margin-left: 20px;">View History</button>
         </div>
         
         <div id="status"></div>
@@ -471,7 +571,7 @@
         <hr>
         
         <div class="footer">
-            Powered by youtube-transcript-api | Web 1.0 Style
+            Powered by youtube-transcript-api | HARD-K
         </div>
     </div>
     
@@ -521,12 +621,118 @@
     <script>
         let player;
         let playerReady = false;
+        let currentVideoData = null; // Store current video data for saving
         
         // Load YouTube IFrame API
         const tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         const firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        
+        // Check if we need to load a saved video
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const loadVideoId = urlParams.get('load');
+            if (loadVideoId) {
+                loadSavedVideo(loadVideoId);
+            }
+        };
+        
+        function saveVideoData() {
+            if (!currentVideoData) return;
+            
+            const key = `hermes_video_${currentVideoData.metadata.video_id}`;
+            const dataToSave = {
+                metadata: currentVideoData.metadata,
+                transcript: currentVideoData.transcript,
+                flashcards: currentVideoData.flashcards || null,
+                timestamp: Date.now()
+            };
+            
+            localStorage.setItem(key, JSON.stringify(dataToSave));
+            
+            // Show save confirmation
+            const statusDiv = document.getElementById('status');
+            const currentStatus = statusDiv.innerHTML;
+            statusDiv.innerHTML = '<p style="color: green; font-weight: bold;">✓ Video saved to history!</p>';
+            setTimeout(() => {
+                statusDiv.innerHTML = currentStatus;
+            }, 3000);
+        }
+        
+        function loadSavedVideo(videoId) {
+            const key = `hermes_video_${videoId}`;
+            const savedData = localStorage.getItem(key);
+            
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    
+                    // Update video ID input
+                    document.getElementById('videoId').value = videoId;
+                    
+                    // Update current video data
+                    currentVideoData = {
+                        metadata: data.metadata,
+                        transcript: data.transcript,
+                        flashcards: data.flashcards
+                    };
+                    
+                    // Display video info
+                    document.getElementById('videoInfo').style.display = 'block';
+                    document.getElementById('videoTitle').textContent = data.metadata.title;
+                    document.getElementById('videoChannel').textContent = `by ${data.metadata.channel}`;
+                    
+                    // Update page title
+                    document.title = `${data.metadata.title} - Hermes Transcript Viewer`;
+                    
+                    // Store metadata globally
+                    window.videoMetadata = data.metadata;
+                    
+                    // Create YouTube player
+                    const videoContainerDiv = document.getElementById('videoContainer');
+                    videoContainerDiv.style.display = 'block';
+                    videoContainerDiv.innerHTML = '<div id="ytplayer"></div>';
+                    
+                    // Wait for YouTube API and create player
+                    const createPlayer = () => {
+                        if (window.YT && window.YT.Player) {
+                            player = new YT.Player('ytplayer', {
+                                height: '390',
+                                width: '640',
+                                videoId: videoId,
+                                events: {
+                                    'onReady': onPlayerReady,
+                                    'onStateChange': onPlayerStateChange
+                                }
+                            });
+                        } else {
+                            setTimeout(createPlayer, 100);
+                        }
+                    };
+                    createPlayer();
+                    
+                    // Display transcript
+                    window.currentTranscript = data.transcript;
+                    displayTranscript(data.transcript);
+                    
+                    // Display flashcards if available
+                    if (data.flashcards) {
+                        flashcardsData = data.flashcards;
+                        displayFlashcards(data.flashcards);
+                    }
+                    
+                    // Show status
+                    document.getElementById('status').innerHTML = '<p style="color: green; font-weight: bold;">Loaded from history!</p>';
+                    
+                } catch (e) {
+                    console.error('Error loading saved video:', e);
+                    document.getElementById('status').innerHTML = '<p class="error">Error loading saved video!</p>';
+                }
+            } else {
+                document.getElementById('status').innerHTML = '<p class="error">Video not found in history!</p>';
+            }
+        }
         
         // This function will be called by YouTube API
         function onYouTubeIframeAPIReady() {
@@ -628,6 +834,13 @@
                         video_id: data.video_id
                     };
                     
+                    // Initialize currentVideoData
+                    currentVideoData = {
+                        metadata: window.videoMetadata,
+                        transcript: null,
+                        flashcards: null
+                    };
+                    
                     // Create YouTube player
                     const videoContainerDiv = document.getElementById('videoContainer');
                     videoContainerDiv.style.display = 'block';
@@ -689,24 +902,31 @@
             const containerDiv = document.getElementById('transcriptContainer');
             let html = '<div class="transcript-container">';
             
-            // Group entries that are close together (within 30 seconds)
             let groupedEntries = [];
-            let currentGroup = null;
-            const TIME_THRESHOLD = 30; // seconds
             
-            transcriptData.forEach((entry, index) => {
-                if (!currentGroup || entry.start - currentGroup.start > TIME_THRESHOLD) {
-                    // Start a new group
-                    currentGroup = {
-                        start: entry.start,
-                        texts: [entry.text]
-                    };
-                    groupedEntries.push(currentGroup);
-                } else {
-                    // Add to current group
-                    currentGroup.texts.push(entry.text);
-                }
-            });
+            // Check if transcriptData is already grouped (loaded from history)
+            if (transcriptData.length > 0 && transcriptData[0].texts) {
+                // Already grouped format (from saved data)
+                groupedEntries = transcriptData;
+            } else {
+                // Group entries that are close together (within 30 seconds)
+                let currentGroup = null;
+                const TIME_THRESHOLD = 30; // seconds
+                
+                transcriptData.forEach((entry, index) => {
+                    if (!currentGroup || entry.start - currentGroup.start > TIME_THRESHOLD) {
+                        // Start a new group
+                        currentGroup = {
+                            start: entry.start,
+                            texts: [entry.text]
+                        };
+                        groupedEntries.push(currentGroup);
+                    } else {
+                        // Add to current group
+                        currentGroup.texts.push(entry.text);
+                    }
+                });
+            }
             
             // Display grouped entries
             groupedEntries.forEach((group, index) => {
@@ -732,6 +952,13 @@
             
             // Store transcript data globally for download
             window.currentTranscript = groupedEntries;
+            
+            // Save transcript to currentVideoData
+            if (currentVideoData) {
+                currentVideoData.transcript = groupedEntries;
+                // Auto-save when transcript is loaded
+                saveVideoData();
+            }
         }
         
         function downloadTranscript() {
@@ -849,6 +1076,12 @@
                     loadingStatus.textContent = 'Complete! Loading your flashcards...';
                     
                     flashcardsData = data;
+                    
+                    // Save flashcards to currentVideoData
+                    if (currentVideoData) {
+                        currentVideoData.flashcards = data;
+                        saveVideoData();
+                    }
                     
                     // Small delay before closing
                     await new Promise(resolve => setTimeout(resolve, 1000));

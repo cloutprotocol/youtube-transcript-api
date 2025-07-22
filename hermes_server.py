@@ -48,9 +48,11 @@ class TranscriptHandler(BaseHTTPRequestHandler):
         # Parse the URL
         parsed_path = urlparse(self.path)
         
-        # Serve the HTML file
+        # Serve the HTML files
         if parsed_path.path == '/' or parsed_path.path == '/hermes.html':
-            self.serve_html()
+            self.serve_html('hermes.html')
+        elif parsed_path.path == '/history.html':
+            self.serve_html('history.html')
         # Handle API requests
         elif parsed_path.path.startswith('/api/transcript/'):
             video_id = parsed_path.path.split('/')[-1]
@@ -70,15 +72,15 @@ class TranscriptHandler(BaseHTTPRequestHandler):
         else:
             self.send_error(404, "Endpoint not found")
     
-    def serve_html(self):
+    def serve_html(self, filename):
         try:
-            with open('hermes.html', 'rb') as file:
+            with open(filename, 'rb') as file:
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
                 self.wfile.write(file.read())
         except FileNotFoundError:
-            self.send_error(404, "hermes.html not found")
+            self.send_error(404, f"{filename} not found")
     
     def get_video_metadata(self, video_id):
         """Fetch video title and metadata from YouTube"""
@@ -269,9 +271,11 @@ Make sure to return ONLY valid JSON, no additional text or formatting."""
             self.wfile.write(json.dumps(response).encode())
 
 def run_server(port=8888):
-    server_address = ('', port)
+    server_address = ('0.0.0.0', port)
     httpd = HTTPServer(server_address, TranscriptHandler)
-    print(f"🚀 Hermes server running on http://localhost:{port}")
+    print(f"🚀 Hermes server running on http://0.0.0.0:{port}")
+    print(f"   Local: http://localhost:{port}")
+    print(f"   Network: http://<your-ip>:{port}")
     print("Press Ctrl+C to stop the server")
     
     try:

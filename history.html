@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hermes - History</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border: 2px solid #000;
+            padding: 20px;
+            box-shadow: 5px 5px 0px #888;
+        }
+        
+        h1 {
+            color: #000080;
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-decoration: underline;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        
+        .back-button {
+            padding: 5px 20px;
+            font-size: 16px;
+            background-color: #c0c0c0;
+            border: 2px outset #fff;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .back-button:hover {
+            background-color: #a0a0a0;
+        }
+        
+        .back-button:active {
+            border: 2px inset #999;
+        }
+        
+        .history-list {
+            text-align: left;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #999;
+            padding: 10px;
+            background-color: #f8f8f8;
+        }
+        
+        .history-item {
+            background-color: white;
+            border: 1px solid #666;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+        
+        .video-title {
+            font-weight: bold;
+            color: #000080;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .video-meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .video-stats {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .history-buttons {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .delete-button {
+            background-color: #ff6666;
+            color: white;
+            border: 1px solid #cc0000;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .delete-button:hover {
+            background-color: #ff3333;
+        }
+        
+        .download-button {
+            background-color: #6666ff;
+            color: white;
+            border: 1px solid #0000cc;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .download-button:hover {
+            background-color: #3333ff;
+        }
+        
+        .view-button {
+            background-color: #999999;
+            color: white;
+            border: 1px solid #666666;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .view-button:hover {
+            background-color: #777777;
+        }
+        
+        .no-history {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        hr {
+            border: 0;
+            border-top: 2px solid #000;
+            margin: 20px 0;
+        }
+        
+        .clear-all-button {
+            background-color: #ff6666;
+            color: white;
+            border: 2px solid #cc0000;
+            padding: 5px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .clear-all-button:hover {
+            background-color: #ff3333;
+        }
+        
+        .backup-button {
+            background-color: #008000;
+            color: white;
+            border: 2px solid #006600;
+            padding: 5px 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .backup-button:hover {
+            background-color: #00a000;
+        }
+        
+        .storage-note {
+            background-color: #ffffcc;
+            border: 1px dotted #666;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            margin-top: 20px;
+        }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+                max-width: 100%;
+            }
+            
+            button {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .back-button {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .backup-button {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .clear-all-button {
+                width: 100%;
+                margin: 0;
+            }
+            
+            .history-item {
+                padding: 10px;
+                padding-top: 50px; /* Space for buttons */
+            }
+            
+            .history-buttons {
+                flex-direction: column;
+                width: 100%;
+                gap: 5px;
+                position: static;
+                margin-bottom: 10px;
+            }
+            
+            .history-buttons button {
+                width: 100%;
+                margin: 0;
+            }
+            
+            .download-button,
+            .delete-button,
+            .view-button {
+                width: 100%;
+                padding: 8px 15px;
+            }
+            
+            .video-title {
+                font-size: 16px;
+            }
+            
+            .video-meta {
+                font-size: 13px;
+            }
+            
+            .video-stats {
+                font-size: 11px;
+                line-height: 1.4;
+            }
+            
+            .storage-note {
+                padding: 10px;
+                font-size: 13px;
+            }
+            
+            .storage-note ul {
+                padding-left: 15px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .history-list {
+                max-height: 500px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+                margin: 5px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .history-item {
+                padding: 8px;
+                padding-top: 45px;
+                margin-bottom: 8px;
+            }
+            
+            .video-title {
+                font-size: 15px;
+            }
+            
+            .video-meta {
+                font-size: 12px;
+            }
+            
+            .video-stats {
+                font-size: 10px;
+            }
+            
+            .history-list {
+                max-height: 400px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HERMES</h1>
+        <p class="subtitle">Saved Transcripts & Flashcards</p>
+        
+        <button class="back-button" onclick="window.location.href='hermes.html'">← Back to Transcriber</button>
+        
+        <hr>
+        
+        <div class="storage-note">
+            <strong>⚠️ Important:</strong> Data is stored in your browser's localStorage. This means:
+            <ul style="margin: 5px 0; padding-left: 20px;">
+                <li>Data is only available on this device and browser</li>
+                <li>Clearing browser data will delete all saved videos</li>
+                <li>Storage is limited (usually 5-10MB)</li>
+                <li>Use the "Backup All" button to save your data externally</li>
+            </ul>
+        </div>
+        
+        <button class="backup-button" onclick="backupAllData()" style="display: none;" id="backupBtn">📦 Backup All to ZIP</button>
+        
+        <div id="historyContainer" class="history-list">
+            <div class="no-history">No saved transcripts yet. Go back and transcribe a video!</div>
+        </div>
+        
+        <div class="button-container" id="buttonContainer" style="display: none;">
+            <button class="clear-all-button" onclick="clearAllHistory()" id="clearAllBtn">Clear All History</button>
+        </div>
+        
+        <hr>
+        
+        <div class="footer" style="margin-top: 30px; font-size: 12px; color: #666;">
+            Powered by youtube-transcript-api | HARD-K
+        </div>
+    </div>
+    
+    <script>
+        function loadHistory() {
+            const container = document.getElementById('historyContainer');
+            const clearBtn = document.getElementById('clearAllBtn');
+            
+            // Get all saved videos from localStorage
+            const savedVideos = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('hermes_video_')) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        savedVideos.push({
+                            key: key,
+                            data: data,
+                            timestamp: data.timestamp || Date.now()
+                        });
+                    } catch (e) {
+                        console.error('Error parsing saved video:', e);
+                    }
+                }
+            }
+            
+            if (savedVideos.length === 0) {
+                container.innerHTML = '<div class="no-history">No saved transcripts yet. Go back and transcribe a video!</div>';
+                document.getElementById('buttonContainer').style.display = 'none';
+                document.getElementById('backupBtn').style.display = 'none';
+                return;
+            }
+            
+            // Sort by timestamp (newest first)
+            savedVideos.sort((a, b) => b.timestamp - a.timestamp);
+            
+            // Display videos
+            container.innerHTML = '';
+            document.getElementById('buttonContainer').style.display = 'flex';
+            document.getElementById('backupBtn').style.display = 'block';
+            
+            savedVideos.forEach(item => {
+                const videoDiv = document.createElement('div');
+                videoDiv.className = 'history-item';
+                
+                const hasFlashcards = item.data.flashcards && item.data.flashcards.flashcards;
+                const flashcardCount = hasFlashcards ? item.data.flashcards.flashcards.length : 0;
+                const transcriptLength = item.data.transcript ? item.data.transcript.length : 0;
+                
+                videoDiv.innerHTML = `
+                    <div class="history-buttons">
+                        <button class="view-button" onclick="viewVideo(event, '${item.data.metadata.video_id}')">View</button>
+                        <button class="download-button" onclick="downloadVideo(event, '${item.key}')">Download</button>
+                        <button class="delete-button" onclick="deleteVideo(event, '${item.key}')">Delete</button>
+                    </div>
+                    <div class="video-title">${item.data.metadata.title}</div>
+                    <div class="video-meta">by ${item.data.metadata.channel}</div>
+                    <div class="video-stats">
+                        Video ID: ${item.data.metadata.video_id} | 
+                        Transcript entries: ${transcriptLength} | 
+                        Flashcards: ${flashcardCount} |
+                        Saved: ${new Date(item.timestamp).toLocaleDateString()}
+                    </div>
+                `;
+                
+                container.appendChild(videoDiv);
+            });
+        }
+        
+        function loadVideo(videoId) {
+            // Navigate to hermes.html with video ID as parameter
+            window.location.href = `hermes.html?load=${videoId}`;
+        }
+        
+        function viewVideo(event, videoId) {
+            event.stopPropagation();
+            loadVideo(videoId);
+        }
+        
+        function deleteVideo(event, key) {
+            event.stopPropagation();
+            if (confirm('Are you sure you want to delete this saved video?')) {
+                localStorage.removeItem(key);
+                loadHistory();
+            }
+        }
+        
+        function clearAllHistory() {
+            if (confirm('Are you sure you want to delete ALL saved videos? This cannot be undone.')) {
+                // Remove all hermes_video_ items
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('hermes_video_')) {
+                        keysToRemove.push(key);
+                    }
+                }
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+                loadHistory();
+            }
+        }
+        
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function downloadVideo(event, key) {
+            event.stopPropagation();
+            const data = JSON.parse(localStorage.getItem(key));
+            if (!data) return;
+            
+            // Create combined content
+            let content = `${data.metadata.title}\n`;
+            content += '='.repeat(data.metadata.title.length) + '\n';
+            content += `by ${data.metadata.channel}\n`;
+            content += `Video ID: ${data.metadata.video_id}\n`;
+            content += `Saved: ${new Date(data.timestamp).toLocaleString()}\n\n`;
+            
+            // Add transcript
+            content += 'TRANSCRIPT\n';
+            content += '----------\n\n';
+            if (data.transcript) {
+                data.transcript.forEach(group => {
+                    content += `[${formatTime(group.start)}]\n`;
+                    content += group.texts.join(' ') + '\n\n';
+                });
+            }
+            
+            // Add flashcards if available
+            if (data.flashcards && data.flashcards.flashcards) {
+                content += '\n\nFLASHCARDS\n';
+                content += '----------\n\n';
+                
+                if (data.flashcards.video_analysis) {
+                    content += `Video Analysis:\n`;
+                    content += `Main Topic: ${data.flashcards.video_analysis.main_topic}\n`;
+                    content += `Key Themes: ${data.flashcards.video_analysis.key_themes.join(', ')}\n`;
+                    content += `Intent: ${data.flashcards.video_analysis.video_intent}\n\n`;
+                }
+                
+                data.flashcards.flashcards.forEach((card, index) => {
+                    content += `Question ${index + 1}: ${card.question}\n`;
+                    content += `Timestamp: ${formatTime(card.timestamp)}\n`;
+                    content += `Related Quote: "${card.related_quote}"\n\n`;
+                    content += `Options:\n`;
+                    Object.entries(card.options).forEach(([key, value]) => {
+                        content += `  ${key}. ${value}\n`;
+                    });
+                    content += `\nCorrect Answer: ${card.correct_answer}\n`;
+                    content += `Explanation: ${card.explanation}\n`;
+                    content += '\n' + '-'.repeat(50) + '\n\n';
+                });
+            }
+            
+            // Download file
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            const filename = data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_complete.txt';
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
+        async function backupAllData() {
+            // Check if JSZip is available
+            if (typeof JSZip === 'undefined') {
+                // Load JSZip from CDN
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+                document.head.appendChild(script);
+                
+                // Wait for script to load
+                await new Promise((resolve) => {
+                    script.onload = resolve;
+                });
+            }
+            
+            const zip = new JSZip();
+            
+            // Get all saved videos
+            const savedVideos = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('hermes_video_')) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        savedVideos.push(data);
+                    } catch (e) {
+                        console.error('Error parsing saved video:', e);
+                    }
+                }
+            }
+            
+            if (savedVideos.length === 0) {
+                alert('No videos to backup!');
+                return;
+            }
+            
+            // Create a folder for each video
+            savedVideos.forEach((data, index) => {
+                const folderName = data.metadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                const folder = zip.folder(folderName);
+                
+                // Add metadata
+                const metadata = {
+                    title: data.metadata.title,
+                    channel: data.metadata.channel,
+                    video_id: data.metadata.video_id,
+                    saved_date: new Date(data.timestamp).toISOString()
+                };
+                folder.file('metadata.json', JSON.stringify(metadata, null, 2));
+                
+                // Add transcript
+                if (data.transcript) {
+                    let transcriptContent = '';
+                    data.transcript.forEach(group => {
+                        transcriptContent += `[${formatTime(group.start)}]\n`;
+                        transcriptContent += group.texts.join(' ') + '\n\n';
+                    });
+                    folder.file('transcript.txt', transcriptContent);
+                }
+                
+                // Add flashcards
+                if (data.flashcards) {
+                    folder.file('flashcards.json', JSON.stringify(data.flashcards, null, 2));
+                    
+                    // Also create a readable flashcards text file
+                    let flashcardContent = '';
+                    if (data.flashcards.video_analysis) {
+                        flashcardContent += `Video Analysis:\n`;
+                        flashcardContent += `Main Topic: ${data.flashcards.video_analysis.main_topic}\n`;
+                        flashcardContent += `Key Themes: ${data.flashcards.video_analysis.key_themes.join(', ')}\n`;
+                        flashcardContent += `Intent: ${data.flashcards.video_analysis.video_intent}\n\n`;
+                    }
+                    
+                    if (data.flashcards.flashcards) {
+                        data.flashcards.flashcards.forEach((card, idx) => {
+                            flashcardContent += `Question ${idx + 1}: ${card.question}\n`;
+                            flashcardContent += `Correct Answer: ${card.correct_answer}\n`;
+                            flashcardContent += `Explanation: ${card.explanation}\n\n`;
+                        });
+                    }
+                    folder.file('flashcards.txt', flashcardContent);
+                }
+                
+                // Add complete backup file
+                folder.file('complete_backup.json', JSON.stringify(data, null, 2));
+            });
+            
+            // Add a readme file
+            const readme = `Hermes Backup
+=============
+
+This backup contains ${savedVideos.length} saved video(s) from Hermes YouTube Transcript Service.
+
+Each folder contains:
+- metadata.json: Video information
+- transcript.txt: The video transcript with timestamps
+- flashcards.json: Generated flashcards (if available)
+- flashcards.txt: Human-readable flashcards (if available)
+- complete_backup.json: Complete data backup for restoration
+
+To restore this data:
+1. Open Hermes in your browser
+2. Use the browser's developer console
+3. Load each complete_backup.json file and save to localStorage
+
+Backup created: ${new Date().toLocaleString()}
+`;
+            zip.file('README.txt', readme);
+            
+            // Generate and download the zip file
+            zip.generateAsync({ type: 'blob' }).then(function(content) {
+                const url = window.URL.createObjectURL(content);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `hermes_backup_${new Date().toISOString().split('T')[0]}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            });
+        }
+        
+        // Load history on page load
+        window.onload = loadHistory;
+    </script>
+</body>
+</html>
