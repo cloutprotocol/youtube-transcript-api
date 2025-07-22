@@ -9,3 +9,4 @@ cmd = "python hermes_server.py"
 
 [variables]
 PYTHONUNBUFFERED = "1"
+PORT = "8590"

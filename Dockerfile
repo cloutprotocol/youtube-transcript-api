@@ -19,12 +19,17 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY hermes_server.py .
 COPY hermes.html .
 COPY history.html .
+COPY start.sh .
+
+# Make start script executable
+RUN chmod +x start.sh
 
 # Expose port 8590
 EXPOSE 8590
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8590
 
-# Run the server
-CMD ["python", "hermes_server.py"]
+# Run the server using the startup script
+CMD ["./start.sh"]
