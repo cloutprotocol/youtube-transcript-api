@@ -56,6 +56,8 @@ class TranscriptHandler(BaseHTTPRequestHandler):
             self.serve_html('hermes.html')
         elif parsed_path.path == '/history.html':
             self.serve_html('history.html')
+        elif parsed_path.path == '/api/health':
+            self.serve_health_check()
         # Handle API requests
         elif parsed_path.path.startswith('/api/transcript/'):
             video_id = parsed_path.path.split('/')[-1]
@@ -90,6 +92,20 @@ class TranscriptHandler(BaseHTTPRequestHandler):
         except FileNotFoundError:
             self.send_error(404, f"{filename} not found")
     
+    def serve_health_check(self):
+        """Simple health check endpoint"""
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        
+        response = {
+            'status': 'ok',
+            'service': 'hermes-transcript-api',
+            'timestamp': datetime.now().isoformat()
+        }
+        self.wfile.write(json.dumps(response).encode())
+    
     def serve_client_fetcher(self):
         """Serve the client-side YouTube transcript fetcher JavaScript"""
         self.send_response(200)
@@ -98,7 +114,7 @@ class TranscriptHandler(BaseHTTPRequestHandler):
         self.end_headers()
         
         # Minified client-side fetcher
-        client_fetcher_code = '''
+        client_fetcher_code = r'''
 class YouTubeClientFetcher {
     async extractVideoId(url) {
         const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;

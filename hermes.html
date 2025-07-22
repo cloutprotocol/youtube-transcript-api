@@ -813,13 +813,23 @@
             containerDiv.innerHTML = '';
             
             try {
+                // First check if server is reachable
+                try {
+                    const healthCheck = await fetch('/api/health');
+                    if (!healthCheck.ok) {
+                        throw new Error('Server health check failed');
+                    }
+                } catch (e) {
+                    throw new Error('Cannot connect to server. Make sure the server is running and accessible.');
+                }
+                
                 // Load client-side fetcher if not already loaded
                 if (!window.YouTubeClientFetcher) {
                     const script = document.createElement('script');
                     script.src = '/api/client-fetcher.js';
                     await new Promise((resolve, reject) => {
                         script.onload = resolve;
-                        script.onerror = reject;
+                        script.onerror = () => reject(new Error('Failed to load client-side fetcher script'));
                         document.head.appendChild(script);
                     });
                 }
@@ -904,21 +914,23 @@
                 }
                 
             } catch (error) {
-                statusDiv.innerHTML = `<p class="error">Error: Could not connect to server. Make sure hermes_server.py is running!</p>`;
-                containerDiv.innerHTML = `
-                    <div class="transcript-container">
-                        <p><strong>To use Hermes:</strong></p>
-                        <ol style="text-align: left; margin: 20px;">
-                            <li>Start the server:<br>
-                                <code style="background: #eee; padding: 2px 5px;">poetry run python hermes_server.py</code>
-                            </li>
-                            <li>Open your browser to:<br>
-                                <code style="background: #eee; padding: 2px 5px;">http://localhost:8590</code>
-                            </li>
-                            <li>Enter a YouTube video ID and click "Fetch Transcript"</li>
-                        </ol>
-                    </div>
-                `;
+                console.error('Transcript fetch error:', error);
+                statusDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+                
+                // Check if it's a server connection issue
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    containerDiv.innerHTML = `
+                        <div class="transcript-container">
+                            <p><strong>Could not connect to server. Please check:</strong></p>
+                            <ol style="text-align: left; margin: 20px;">
+                                <li>Is the server running?</li>
+                                <li>Is the correct port exposed in your deployment?</li>
+                                <li>Check browser console for more details</li>
+                            </ol>
+                        </div>`;
+                } else {
+                    containerDiv.innerHTML = `<div class="transcript-container"><p>An error occurred. Check the browser console for details.</p></div>`;
+                }
             }
         }
         
