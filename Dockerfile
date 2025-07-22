@@ -20,9 +20,6 @@ COPY hermes_server.py .
 COPY hermes.html .
 COPY history.html .
 
-# Create a .env file placeholder
-RUN touch .env
-
 # Expose port 8590
 EXPOSE 8590
 

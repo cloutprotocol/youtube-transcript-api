@@ -7,9 +7,9 @@ services:
       - "8590:8590"
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-    volumes:
-      # Optional: Mount .env file if you want to use local .env
-      - ./.env:/app/.env:ro
+    # Uncomment the following lines if you want to use a local .env file
+    # volumes:
+    #   - ./.env:/app/.env:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8590/"]
