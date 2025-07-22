@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hermes - YouTube Transcript Viewer</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border: 2px solid #000;
+            padding: 20px;
+            box-shadow: 5px 5px 0px #888;
+        }
+        
+        h1 {
+            color: #000080;
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-decoration: underline;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #e8e8e8;
+            border: 1px solid #999;
+        }
+        
+        input[type="text"] {
+            width: 300px;
+            padding: 5px;
+            font-size: 16px;
+            border: 2px solid #000;
+            font-family: "Courier New", monospace;
+        }
+        
+        button {
+            padding: 5px 20px;
+            font-size: 16px;
+            background-color: #c0c0c0;
+            border: 2px outset #fff;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        button:hover {
+            background-color: #a0a0a0;
+        }
+        
+        button:active {
+            border: 2px inset #999;
+        }
+        
+        .action-buttons {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8e8e8;
+            border: 1px solid #999;
+        }
+        
+        .action-buttons button {
+            margin: 0 10px;
+        }
+        
+        .loading {
+            color: #000080;
+            font-weight: bold;
+            blink: 1s;
+        }
+        
+        .error {
+            color: #ff0000;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .transcript-container {
+            text-align: left;
+            max-height: 500px;
+            overflow-y: scroll;
+            border: 1px solid #999;
+            padding: 20px;
+            background-color: #ffffcc;
+            margin-top: 20px;
+        }
+        
+        .transcript-entry {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px dotted #666;
+        }
+        
+        .timestamp {
+            color: #000080;
+            font-weight: bold;
+            font-family: "Courier New", monospace;
+        }
+        
+        .text {
+            margin-top: 5px;
+            line-height: 1.5;
+        }
+        
+        hr {
+            border: 0;
+            border-top: 2px solid #000;
+            margin: 20px 0;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .blink {
+            animation: blink 1s step-start infinite;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HERMES</h1>
+        <p class="subtitle">YouTube Transcript Viewer</p>
+        
+        <hr>
+        
+        <div class="input-section">
+            <label for="videoId"><strong>Enter YouTube Video ID:</strong></label><br><br>
+            <input type="text" id="videoId" placeholder="e.g., AXz6TMAwqnY" value="AXz6TMAwqnY">
+            <button onclick="fetchTranscript()">Fetch Transcript</button>
+        </div>
+        
+        <div id="status"></div>
+        <div id="videoInfo" style="display: none; margin: 20px 0; padding: 15px; background-color: #f8f8f8; border: 1px solid #ccc;">
+            <h2 id="videoTitle" style="margin: 0 0 10px 0; color: #333;"></h2>
+            <p id="videoChannel" style="margin: 0; color: #666; font-style: italic;"></p>
+        </div>
+        <div id="transcriptContainer"></div>
+        
+        <hr>
+        
+        <div class="footer">
+            Powered by youtube-transcript-api | Web 1.0 Style
+        </div>
+    </div>
+    
+    <script>
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        async function fetchTranscript() {
+            const videoId = document.getElementById('videoId').value.trim();
+            const statusDiv = document.getElementById('status');
+            const containerDiv = document.getElementById('transcriptContainer');
+            
+            if (!videoId) {
+                statusDiv.innerHTML = '<p class="error">Please enter a video ID!</p>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<p class="loading blink">Loading transcript...</p>';
+            containerDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch(`http://localhost:8888/api/transcript/${videoId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.innerHTML = '<p style="color: green; font-weight: bold;">Transcript loaded successfully!</p>';
+                    
+                    // Display video info
+                    document.getElementById('videoInfo').style.display = 'block';
+                    document.getElementById('videoTitle').textContent = data.title;
+                    document.getElementById('videoChannel').textContent = `by ${data.channel}`;
+                    
+                    // Update page title
+                    document.title = `${data.title} - Hermes Transcript Viewer`;
+                    
+                    // Store metadata for download
+                    window.videoMetadata = {
+                        title: data.title,
+                        channel: data.channel,
+                        video_id: data.video_id
+                    };
+                    
+                    displayTranscript(data.transcript);
+                } else {
+                    statusDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                    document.getElementById('videoInfo').style.display = 'none';
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<p class="error">Error: Could not connect to server. Make sure hermes_server.py is running!</p>`;
+                containerDiv.innerHTML = `
+                    <div class="transcript-container">
+                        <p><strong>To use Hermes:</strong></p>
+                        <ol style="text-align: left; margin: 20px;">
+                            <li>Start the server:<br>
+                                <code style="background: #eee; padding: 2px 5px;">poetry run python hermes_server.py</code>
+                            </li>
+                            <li>Open your browser to:<br>
+                                <code style="background: #eee; padding: 2px 5px;">http://localhost:8888</code>
+                            </li>
+                            <li>Enter a YouTube video ID and click "Fetch Transcript"</li>
+                        </ol>
+                    </div>
+                `;
+            }
+        }
+        
+        // Function to display transcript data (for when you have real API integration)
+        function displayTranscript(transcriptData) {
+            const containerDiv = document.getElementById('transcriptContainer');
+            let html = '<div class="transcript-container">';
+            
+            // Group entries that are close together (within 30 seconds)
+            let groupedEntries = [];
+            let currentGroup = null;
+            const TIME_THRESHOLD = 30; // seconds
+            
+            transcriptData.forEach((entry, index) => {
+                if (!currentGroup || entry.start - currentGroup.start > TIME_THRESHOLD) {
+                    // Start a new group
+                    currentGroup = {
+                        start: entry.start,
+                        texts: [entry.text]
+                    };
+                    groupedEntries.push(currentGroup);
+                } else {
+                    // Add to current group
+                    currentGroup.texts.push(entry.text);
+                }
+            });
+            
+            // Display grouped entries
+            groupedEntries.forEach(group => {
+                html += `
+                    <div class="transcript-entry">
+                        <span class="timestamp">[${formatTime(group.start)}]</span>
+                        <div class="text">${group.texts.join(' ')}</div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            // Add action buttons
+            html += `
+                <div class="action-buttons">
+                    <button onclick="downloadTranscript()">Download Transcript</button>
+                    <button onclick="generateFlashcards()">Generate Flashcards</button>
+                </div>
+            `;
+            
+            containerDiv.innerHTML = html;
+            
+            // Store transcript data globally for download
+            window.currentTranscript = groupedEntries;
+        }
+        
+        function downloadTranscript() {
+            if (!window.currentTranscript) {
+                alert('No transcript loaded!');
+                return;
+            }
+            
+            // Create plain text content with video metadata
+            let textContent = window.videoMetadata.title + '\n';
+            textContent += '='.repeat(window.videoMetadata.title.length) + '\n';
+            textContent += `by ${window.videoMetadata.channel}\n`;
+            textContent += `Video ID: ${window.videoMetadata.video_id}\n\n`;
+            
+            window.currentTranscript.forEach(group => {
+                textContent += `[${formatTime(group.start)}]\n`;
+                textContent += group.texts.join(' ') + '\n\n';
+            });
+            
+            // Create download link
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            // Use video title for filename (sanitized)
+            const filename = window.videoMetadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_transcript.txt';
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
+        function generateFlashcards() {
+            if (!window.currentTranscript) {
+                alert('No transcript loaded!');
+                return;
+            }
+            
+            // For now, just show an alert
+            // You can implement flashcard generation logic here
+            alert('Flashcard generation coming soon! This feature will analyze the transcript and create study flashcards.');
+        }
+    </script>
+</body>
+</html>
