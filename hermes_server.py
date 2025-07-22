@@ -8,6 +8,7 @@ import os
 from urllib.parse import urlparse, parse_qs
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound
+from youtube_transcript_api.proxies import WebshareProxyConfig
 import urllib.request
 import re
 import os
@@ -113,7 +114,8 @@ class TranscriptHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         
-        # Minified client-side fetcher
+        # Client-side fetcher - Note: Direct YouTube fetching won't work due to CORS
+        # This is a placeholder that returns an error message
         client_fetcher_code = r'''
 class YouTubeClientFetcher {
     async extractVideoId(url) {
@@ -123,63 +125,12 @@ class YouTubeClientFetcher {
     }
 
     async fetchTranscript(videoUrl) {
-        try {
-            const videoId = await this.extractVideoId(videoUrl);
-            if (!videoId) throw new Error('Invalid YouTube URL');
-
-            // Fetch video page
-            const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
-            const html = await response.text();
-
-            // Extract player response
-            const match = html.match(/var ytInitialPlayerResponse = ({.+?});/);
-            if (!match) throw new Error('Could not extract player response');
-
-            const playerResponse = JSON.parse(match[1]);
-            const captionTracks = playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
-            
-            if (!captionTracks.length) throw new Error('No captions available');
-
-            // Find English or first available caption
-            const track = captionTracks.find(t => t.languageCode === 'en' || t.languageCode === 'en-US') || captionTracks[0];
-            
-            // Fetch caption XML
-            const captionResponse = await fetch(track.baseUrl);
-            const captionXml = await captionResponse.text();
-
-            // Parse XML
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(captionXml, 'text/xml');
-            const textElements = xmlDoc.getElementsByTagName('text');
-
-            const transcript = [];
-            for (let i = 0; i < textElements.length; i++) {
-                const element = textElements[i];
-                transcript.push({
-                    text: element.textContent
-                        .replace(/&amp;/g, '&')
-                        .replace(/&lt;/g, '<')
-                        .replace(/&gt;/g, '>')
-                        .replace(/&quot;/g, '"')
-                        .replace(/&#39;/g, "'"),
-                    start: parseFloat(element.getAttribute('start')),
-                    duration: parseFloat(element.getAttribute('dur'))
-                });
-            }
-
-            return {
-                success: true,
-                video_id: videoId,
-                transcript: transcript,
-                language: track.name.simpleText,
-                language_code: track.languageCode
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: error.message
-            };
-        }
+        // Direct client-side fetching from YouTube is blocked by CORS
+        // We need to use the server-side approach instead
+        return {
+            success: false,
+            error: 'Client-side YouTube fetching is not possible due to CORS restrictions. The server must handle YouTube requests.'
+        };
     }
 }
 '''
@@ -256,8 +207,22 @@ class YouTubeClientFetcher {
             # Get video metadata
             metadata = self.get_video_metadata(video_id)
             
-            # Create API instance and fetch transcript
-            api = YouTubeTranscriptApi()
+            # Create API instance with proxy if configured
+            proxy_username = os.getenv('WEBSHARE_PROXY_USERNAME')
+            proxy_password = os.getenv('WEBSHARE_PROXY_PASSWORD')
+            
+            if proxy_username and proxy_password:
+                print(f"Using Webshare proxy for video {video_id}")
+                api = YouTubeTranscriptApi(
+                    proxy_config=WebshareProxyConfig(
+                        proxy_username=proxy_username,
+                        proxy_password=proxy_password,
+                    )
+                )
+            else:
+                print(f"No proxy configured, attempting direct fetch for video {video_id}")
+                api = YouTubeTranscriptApi()
+                
             fetched_transcript = api.fetch(video_id)
             
             # Format for easier display

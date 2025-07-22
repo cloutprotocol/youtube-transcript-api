@@ -813,60 +813,26 @@
             containerDiv.innerHTML = '';
             
             try {
-                // First check if server is reachable
-                try {
-                    const healthCheck = await fetch('/api/health');
-                    if (!healthCheck.ok) {
-                        throw new Error('Server health check failed');
-                    }
-                } catch (e) {
-                    throw new Error('Cannot connect to server. Make sure the server is running and accessible.');
-                }
+                // Use server-side fetching (client-side won't work due to CORS)
+                const response = await fetch(`/api/transcript/${videoId}`);
+                const data = await response.json();
                 
-                // Load client-side fetcher if not already loaded
-                if (!window.YouTubeClientFetcher) {
-                    const script = document.createElement('script');
-                    script.src = '/api/client-fetcher.js';
-                    await new Promise((resolve, reject) => {
-                        script.onload = resolve;
-                        script.onerror = () => reject(new Error('Failed to load client-side fetcher script'));
-                        document.head.appendChild(script);
-                    });
-                }
-                
-                // Always use client-side fetch
-                const fetcher = new YouTubeClientFetcher();
-                const clientResult = await fetcher.fetchTranscript(`https://www.youtube.com/watch?v=${videoId}`);
-                
-                // Get metadata from server (this is lightweight and won't be blocked)
-                let metadata = { title: '', channel: '', video_id: videoId };
-                try {
-                    const metadataResponse = await fetch(`/api/metadata/${videoId}`);
-                    const metadataData = await metadataResponse.json();
-                    if (metadataData.success) {
-                        metadata = metadataData;
-                    }
-                } catch (e) {
-                    // If metadata fetch fails, use defaults
-                    console.log('Could not fetch metadata, using defaults');
-                }
-                
-                if (clientResult.success) {
+                if (data.success) {
                     statusDiv.innerHTML = '<p style="color: green; font-weight: bold;">Transcript loaded successfully!</p>';
                     
                     // Display video info
                     document.getElementById('videoInfo').style.display = 'block';
-                    document.getElementById('videoTitle').textContent = metadata.title || `Video ${videoId}`;
-                    document.getElementById('videoChannel').textContent = metadata.channel ? `by ${metadata.channel}` : '';
+                    document.getElementById('videoTitle').textContent = data.title;
+                    document.getElementById('videoChannel').textContent = `by ${data.channel}`;
                     
                     // Update page title
-                    document.title = `${metadata.title || 'Video'} - Hermes Transcript Viewer`;
+                    document.title = `${data.title} - Hermes Transcript Viewer`;
                     
                     // Store metadata for download
                     window.videoMetadata = {
-                        title: metadata.title || `Video ${videoId}`,
-                        channel: metadata.channel || 'Unknown Channel',
-                        video_id: videoId
+                        title: data.title,
+                        channel: data.channel,
+                        video_id: data.video_id
                     };
                     
                     // Initialize currentVideoData
@@ -906,9 +872,9 @@
                         }, 1000);
                     }
                     
-                    displayTranscript(clientResult.transcript);
+                    displayTranscript(data.transcript);
                 } else {
-                    statusDiv.innerHTML = `<p class="error">Error: ${clientResult.error}</p>`;
+                    statusDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
                     document.getElementById('videoInfo').style.display = 'none';
                     document.getElementById('videoContainer').style.display = 'none';
                 }
