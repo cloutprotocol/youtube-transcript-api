@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hermes - YouTube Transcript Viewer</title>
+    <title>Hermes - YouTube Transcribe Service</title>
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
@@ -168,13 +168,13 @@
 <body>
     <div class="container">
         <h1>HERMES</h1>
-        <p class="subtitle">YouTube Transcript Viewer</p>
+        <p class="subtitle">YouTube Transcript Service</p>
         
         <hr>
         
         <div class="input-section">
-            <label for="videoId"><strong>Enter YouTube Video ID:</strong></label><br><br>
-            <input type="text" id="videoId" placeholder="e.g., AXz6TMAwqnY" value="AXz6TMAwqnY">
+            <label for="videoId"><strong>Enter YouTube Video ID or URL:</strong></label><br><br>
+            <input type="text" id="videoId" placeholder="e.g., AXz6TMAwqnY or https://youtube.com/watch?v=AXz6TMAwqnY" value="AXz6TMAwqnY">
             <button onclick="fetchTranscript()">Fetch Transcript</button>
         </div>
         
@@ -239,13 +239,42 @@
             return `${minutes}:${secs.toString().padStart(2, '0')}`;
         }
         
+        function extractVideoId(input) {
+            // If it's already just an ID (11 characters, alphanumeric + dash/underscore)
+            if (/^[a-zA-Z0-9_-]{11}$/.test(input)) {
+                return input;
+            }
+            
+            // Try to extract from various YouTube URL formats
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+                /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/,
+                /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/
+            ];
+            
+            for (const pattern of patterns) {
+                const match = input.match(pattern);
+                if (match) {
+                    return match[1];
+                }
+            }
+            
+            return null;
+        }
+        
         async function fetchTranscript() {
-            const videoId = document.getElementById('videoId').value.trim();
+            const input = document.getElementById('videoId').value.trim();
             const statusDiv = document.getElementById('status');
             const containerDiv = document.getElementById('transcriptContainer');
             
+            if (!input) {
+                statusDiv.innerHTML = '<p class="error">Please enter a YouTube video ID or URL!</p>';
+                return;
+            }
+            
+            const videoId = extractVideoId(input);
             if (!videoId) {
-                statusDiv.innerHTML = '<p class="error">Please enter a video ID!</p>';
+                statusDiv.innerHTML = '<p class="error">Invalid YouTube URL or video ID!</p>';
                 return;
             }
             
