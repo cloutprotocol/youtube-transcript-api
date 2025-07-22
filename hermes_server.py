@@ -13,16 +13,19 @@ import re
 import os
 from datetime import datetime
 
-# Load environment variables from .env file
+# Load environment variables
 from pathlib import Path
 import sys
 
-# Try to load dotenv if available
+# Try to load dotenv if available (but don't require .env file)
 try:
     from dotenv import load_dotenv
-    env_path = Path('.') / '.env'
-    if env_path.exists():
-        load_dotenv(env_path)
+    # Try multiple possible env file locations
+    for env_file in ['.env', 'env', '.env.local']:
+        env_path = Path('.') / env_file
+        if env_path.exists() and env_path.is_file():
+            load_dotenv(env_path)
+            break
 except ImportError:
     pass
 
@@ -285,4 +288,6 @@ def run_server(port=8590):
         httpd.server_close()
 
 if __name__ == '__main__':
-    run_server()
+    # Get port from environment variable or use default
+    port = int(os.getenv('PORT', 8590))
+    run_server(port)
