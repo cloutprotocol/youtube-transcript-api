@@ -47,9 +47,11 @@ lint = "ruff check youtube_transcript_api"
 precommit.shell = "poe format && poe lint && poe coverage"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.14"
+python = ">=3.9,<3.14"
 requests = "*"
 defusedxml = "^0.7.1"
+python-dotenv = "^1.1.1"
+google-generativeai = "^0.8.5"
 
 [tool.poetry.group.test]
 optional = true

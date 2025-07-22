@@ -163,6 +163,274 @@
         @keyframes blink {
             50% { opacity: 0; }
         }
+        
+        /* Flashcard styles */
+        .flashcards-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border: 2px solid #333;
+            display: none;
+        }
+        
+        .flashcards-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .flashcards-header h2 {
+            color: #000080;
+            margin-bottom: 10px;
+        }
+        
+        .video-analysis {
+            background-color: #f5f5f5;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            text-align: left;
+            font-family: Arial, sans-serif;
+        }
+        
+        .video-analysis h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .video-analysis p {
+            margin: 10px 0;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .video-analysis strong {
+            color: #000080;
+        }
+        
+        .key-themes {
+            display: inline-block;
+            background-color: #e0e0ff;
+            padding: 3px 8px;
+            margin: 2px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        
+        .flashcard-list {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .flashcard-item {
+            background-color: #fff;
+            border: 1px solid #666;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .flashcard-question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .flashcard-options {
+            margin-left: 20px;
+        }
+        
+        .flashcard-option {
+            margin: 5px 0;
+        }
+        
+        .correct-answer {
+            color: #008000;
+            font-weight: bold;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 3px solid #000;
+            width: 80%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: #999;
+        }
+        
+        .flashcard-demo {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .demo-question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .demo-options {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .demo-option {
+            padding: 15px;
+            background-color: #e8e8e8;
+            border: 2px solid #666;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .demo-option:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .demo-option.selected {
+            background-color: #c0c0ff;
+            border-color: #000080;
+        }
+        
+        .demo-option.correct {
+            background-color: #90ee90;
+            border-color: #008000;
+        }
+        
+        .demo-option.wrong {
+            background-color: #ffcccb;
+            border-color: #ff0000;
+        }
+        
+        .demo-controls {
+            margin-top: 20px;
+        }
+        
+        .hint-section {
+            background-color: #ffffcc;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px dotted #666;
+            display: none;
+        }
+        
+        .demo-progress {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .demo-score {
+            font-size: 24px;
+            color: #000080;
+            margin: 20px 0;
+        }
+        
+        /* Loading modal styles */
+        .loading-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        
+        .loading-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 30px;
+            border: 3px solid #000;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #000080;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-steps {
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .loading-step {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f0f0f0;
+            border-left: 4px solid #ccc;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-step.active {
+            background-color: #e8e8ff;
+            border-left-color: #000080;
+            font-weight: bold;
+        }
+        
+        .loading-step.completed {
+            background-color: #e8ffe8;
+            border-left-color: #008000;
+        }
+        
+        .loading-step.completed::before {
+            content: "✓ ";
+            color: #008000;
+            font-weight: bold;
+        }
+        
+        .loading-title {
+            font-size: 24px;
+            color: #000080;
+            margin-bottom: 20px;
+        }
+        
+        .loading-status {
+            font-style: italic;
+            color: #666;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -174,7 +442,7 @@
         
         <div class="input-section">
             <label for="videoId"><strong>Enter YouTube Video ID or URL:</strong></label><br><br>
-            <input type="text" id="videoId" placeholder="e.g., AXz6TMAwqnY or https://youtube.com/watch?v=AXz6TMAwqnY" value="AXz6TMAwqnY">
+            <input type="text" id="videoId" placeholder="Enter YouTube URL or ID" value="">
             <button onclick="fetchTranscript()">Fetch Transcript</button>
         </div>
         
@@ -186,10 +454,67 @@
         <div id="videoContainer" class="video-container" style="display: none;"></div>
         <div id="transcriptContainer"></div>
         
+        <div id="flashcardsSection" class="flashcards-section">
+            <div class="flashcards-header">
+                <h2>Flashcards</h2>
+                <p id="flashcardCount"></p>
+                <div class="action-buttons" style="margin-top: 15px;">
+                    <button onclick="downloadFlashcards()">Download Flashcards</button>
+                    <button onclick="startFlashcardDemo()">Demo Flashcards</button>
+                    <button onclick="openInGoogleDocs()">Open in Google Docs</button>
+                </div>
+            </div>
+            <div id="videoAnalysis" class="video-analysis"></div>
+            <div id="flashcardList" class="flashcard-list"></div>
+        </div>
+        
         <hr>
         
         <div class="footer">
             Powered by youtube-transcript-api | Web 1.0 Style
+        </div>
+    </div>
+    
+    <!-- Flashcard Demo Modal -->
+    <div id="flashcardModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeFlashcardModal()">&times;</span>
+            <div class="flashcard-demo">
+                <h2>Flashcard Quiz</h2>
+                <div class="demo-progress" id="demoProgress">Question 1 of 10</div>
+                <div class="demo-question" id="demoQuestion"></div>
+                <div class="demo-options" id="demoOptions"></div>
+                <div class="hint-section" id="hintSection">
+                    <strong>Hint:</strong>
+                    <div id="hintContent"></div>
+                </div>
+                <div class="demo-controls">
+                    <button onclick="showHint()">Show Hint</button>
+                    <button onclick="nextQuestion()" id="nextButton" style="display: none;">Next Question</button>
+                </div>
+                <div class="demo-score" id="demoScore" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="loading-modal">
+        <div class="loading-content">
+            <h2 class="loading-title">Generating Flashcards</h2>
+            <div class="loading-spinner"></div>
+            <div class="loading-steps">
+                <div class="loading-step" id="step1">Preparing transcript data...</div>
+                <div class="loading-step" id="step2">Sending to AI for analysis...</div>
+                <div class="loading-step" id="step3">Identifying key concepts and themes...</div>
+                <div class="loading-step" id="step4">Creating educational questions...</div>
+                <div class="loading-step" id="step5">Formatting flashcards...</div>
+            </div>
+            <div class="loading-status" id="loadingStatus">Please wait while we analyze the video content...</div>
+            <div style="margin-top: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px; font-size: 13px; color: #555;">
+                <strong>📝 Flashcard Generation:</strong><br>
+                • Videos under 25 minutes: 10 flashcards<br>
+                • Videos over 25 minutes: 20 flashcards
+            </div>
         </div>
     </div>
     
@@ -441,15 +766,376 @@
             document.body.removeChild(a);
         }
         
-        function generateFlashcards() {
+        let flashcardsData = null;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+        
+        function updateLoadingStep(stepNumber, status = 'active') {
+            // Reset all steps
+            for (let i = 1; i <= 5; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.classList.remove('active', 'completed');
+            }
+            
+            // Mark completed steps
+            for (let i = 1; i < stepNumber; i++) {
+                document.getElementById(`step${i}`).classList.add('completed');
+            }
+            
+            // Mark current step
+            if (stepNumber <= 5) {
+                document.getElementById(`step${stepNumber}`).classList.add(status);
+            }
+        }
+        
+        async function generateFlashcards() {
             if (!window.currentTranscript) {
                 alert('No transcript loaded!');
                 return;
             }
             
-            // For now, just show an alert
-            // You can implement flashcard generation logic here
-            alert('Flashcard generation coming soon! This feature will analyze the transcript and create study flashcards.');
+            const statusDiv = document.getElementById('status');
+            const loadingModal = document.getElementById('loadingModal');
+            const loadingStatus = document.getElementById('loadingStatus');
+            
+            // Show loading modal
+            loadingModal.style.display = 'block';
+            updateLoadingStep(1);
+            
+            // Step 1: Prepare data
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const transcriptData = {
+                title: window.videoMetadata.title,
+                transcript: window.currentTranscript.map(group => ({
+                    start: group.start,
+                    text: group.texts.join(' '),
+                    duration: 5 // Approximate duration
+                }))
+            };
+            
+            // Step 2: Send to AI
+            updateLoadingStep(2);
+            loadingStatus.textContent = 'Connecting to AI service...';
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            try {
+                // Step 3: AI Analysis
+                updateLoadingStep(3);
+                loadingStatus.textContent = 'AI is analyzing the video content...';
+                
+                const response = await fetch('http://localhost:8888/api/flashcards', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(transcriptData)
+                });
+                
+                // Step 4: Creating questions
+                updateLoadingStep(4);
+                loadingStatus.textContent = 'Generating educational questions...';
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Step 5: Formatting
+                    updateLoadingStep(5);
+                    loadingStatus.textContent = 'Formatting flashcards for display...';
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Mark all steps complete
+                    updateLoadingStep(6);
+                    loadingStatus.textContent = 'Complete! Loading your flashcards...';
+                    
+                    flashcardsData = data;
+                    
+                    // Small delay before closing
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Hide modal and display flashcards
+                    loadingModal.style.display = 'none';
+                    displayFlashcards(data);
+                    statusDiv.innerHTML = '<p style="color: green; font-weight: bold;">Flashcards generated successfully!</p>';
+                } else {
+                    loadingModal.style.display = 'none';
+                    statusDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                loadingModal.style.display = 'none';
+                statusDiv.innerHTML = `<p class="error">Error generating flashcards: ${error.message}</p>`;
+            }
+        }
+        
+        function displayFlashcards(data) {
+            const section = document.getElementById('flashcardsSection');
+            const analysisDiv = document.getElementById('videoAnalysis');
+            const listDiv = document.getElementById('flashcardList');
+            const countDiv = document.getElementById('flashcardCount');
+            
+            // Display video analysis
+            if (data.video_analysis) {
+                const themesHtml = data.video_analysis.key_themes.map(theme => 
+                    `<span class="key-themes">${theme}</span>`
+                ).join('');
+                
+                analysisDiv.innerHTML = `
+                    <h3>Video Analysis</h3>
+                    <p><strong>Main Topic:</strong> ${data.video_analysis.main_topic}</p>
+                    <p><strong>Key Themes:</strong> ${themesHtml}</p>
+                    <p><strong>Intent:</strong> ${data.video_analysis.video_intent}</p>
+                `;
+            }
+            
+            // Display flashcard count
+            countDiv.textContent = `${data.flashcards.length} flashcards created based on video content`;
+            
+            // Display flashcards
+            listDiv.innerHTML = '';
+            data.flashcards.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'flashcard-item';
+                cardDiv.innerHTML = `
+                    <div class="flashcard-question">Q${index + 1}: ${card.question}</div>
+                    <div class="flashcard-options">
+                        ${Object.entries(card.options).map(([key, value]) => 
+                            `<div class="flashcard-option ${key === card.correct_answer ? 'correct-answer' : ''}">
+                                ${key}. ${value}
+                            </div>`
+                        ).join('')}
+                    </div>
+                    <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                        <em>Timestamp: ${formatTime(card.timestamp)} | Based on: "${card.related_quote}"</em>
+                    </div>
+                `;
+                listDiv.appendChild(cardDiv);
+            });
+            
+            section.style.display = 'block';
+        }
+        
+        function downloadFlashcards() {
+            if (!flashcardsData || !flashcardsData.flashcards) {
+                alert('No flashcards to download!');
+                return;
+            }
+            
+            let content = `${window.videoMetadata.title} - Study Flashcards\n`;
+            content += '='.repeat(window.videoMetadata.title.length + 19) + '\n\n';
+            content += `Video Analysis:\n`;
+            content += `--------------\n`;
+            content += `Main Topic: ${flashcardsData.video_analysis.main_topic}\n`;
+            content += `Key Themes: ${flashcardsData.video_analysis.key_themes.join(', ')}\n`;
+            content += `Intent: ${flashcardsData.video_analysis.video_intent}\n\n`;
+            
+            content += `Flashcards:\n`;
+            content += `-----------\n\n`;
+            
+            flashcardsData.flashcards.forEach((card, index) => {
+                content += `Question ${index + 1}: ${card.question}\n`;
+                content += `Timestamp: ${formatTime(card.timestamp)}\n`;
+                content += `Related Quote: "${card.related_quote}"\n\n`;
+                content += `Options:\n`;
+                Object.entries(card.options).forEach(([key, value]) => {
+                    content += `  ${key}. ${value}\n`;
+                });
+                content += `\nCorrect Answer: ${card.correct_answer}\n`;
+                content += `Explanation: ${card.explanation}\n`;
+                content += '\n' + '-'.repeat(50) + '\n\n';
+            });
+            
+            // Create download
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            const filename = window.videoMetadata.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_flashcards.txt';
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
+        function startFlashcardDemo() {
+            if (!flashcardsData || !flashcardsData.flashcards) {
+                alert('No flashcards to demo!');
+                return;
+            }
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            showQuestion();
+            document.getElementById('flashcardModal').style.display = 'block';
+        }
+        
+        function closeFlashcardModal() {
+            document.getElementById('flashcardModal').style.display = 'none';
+        }
+        
+        function showQuestion() {
+            const card = flashcardsData.flashcards[currentQuestionIndex];
+            const progressDiv = document.getElementById('demoProgress');
+            const questionDiv = document.getElementById('demoQuestion');
+            const optionsDiv = document.getElementById('demoOptions');
+            const hintSection = document.getElementById('hintSection');
+            const nextButton = document.getElementById('nextButton');
+            
+            answered = false;
+            progressDiv.textContent = `Question ${currentQuestionIndex + 1} of ${flashcardsData.flashcards.length}`;
+            questionDiv.textContent = card.question;
+            
+            // Reset hint
+            hintSection.style.display = 'none';
+            nextButton.style.display = 'none';
+            
+            // Display options
+            optionsDiv.innerHTML = '';
+            Object.entries(card.options).forEach(([key, value]) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'demo-option';
+                optionDiv.textContent = `${key}. ${value}`;
+                optionDiv.onclick = () => selectAnswer(key);
+                optionsDiv.appendChild(optionDiv);
+            });
+        }
+        
+        function selectAnswer(answer) {
+            if (answered) return;
+            
+            answered = true;
+            const card = flashcardsData.flashcards[currentQuestionIndex];
+            const options = document.querySelectorAll('.demo-option');
+            
+            options.forEach((option, index) => {
+                const optionKey = Object.keys(card.options)[index];
+                if (optionKey === answer) {
+                    option.classList.add('selected');
+                }
+                if (optionKey === card.correct_answer) {
+                    option.classList.add('correct');
+                } else if (optionKey === answer) {
+                    option.classList.add('wrong');
+                }
+            });
+            
+            if (answer === card.correct_answer) {
+                score++;
+            }
+            
+            document.getElementById('nextButton').style.display = 'inline-block';
+        }
+        
+        function showHint() {
+            const card = flashcardsData.flashcards[currentQuestionIndex];
+            const hintSection = document.getElementById('hintSection');
+            const hintContent = document.getElementById('hintContent');
+            
+            hintContent.innerHTML = `
+                <p><strong>Related Quote:</strong> "${card.related_quote}"</p>
+                <p><strong>Timestamp:</strong> ${formatTime(card.timestamp)} 
+                   <button onclick="window.open('https://youtube.com/watch?v=${window.videoMetadata.video_id}&t=${Math.floor(card.timestamp)}', '_blank')" style="margin-left: 10px;">Jump to Video</button>
+                </p>
+            `;
+            hintSection.style.display = 'block';
+        }
+        
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < flashcardsData.flashcards.length) {
+                showQuestion();
+            } else {
+                // Show final score
+                const scoreDiv = document.getElementById('demoScore');
+                const optionsDiv = document.getElementById('demoOptions');
+                const questionDiv = document.getElementById('demoQuestion');
+                const progressDiv = document.getElementById('demoProgress');
+                const controls = document.querySelector('.demo-controls');
+                
+                progressDiv.style.display = 'none';
+                questionDiv.style.display = 'none';
+                optionsDiv.style.display = 'none';
+                controls.style.display = 'none';
+                
+                const percentage = Math.round((score / flashcardsData.flashcards.length) * 100);
+                scoreDiv.innerHTML = `
+                    <h3>Quiz Complete!</h3>
+                    <p>Your Score: ${score} out of ${flashcardsData.flashcards.length} (${percentage}%)</p>
+                    <button onclick="startFlashcardDemo()">Try Again</button>
+                    <button onclick="closeFlashcardModal()">Close</button>
+                `;
+                scoreDiv.style.display = 'block';
+            }
+        }
+        
+        async function openInGoogleDocs() {
+            if (!flashcardsData || !flashcardsData.flashcards) {
+                alert('No flashcards to export!');
+                return;
+            }
+            
+            // Prepare content in rich text format for copying
+            let textContent = `${window.videoMetadata.title} - Flashcards\n\n`;
+            textContent += `VIDEO ANALYSIS\n`;
+            textContent += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            textContent += `Main Topic: ${flashcardsData.video_analysis.main_topic}\n`;
+            textContent += `Key Themes: ${flashcardsData.video_analysis.key_themes.join(', ')}\n`;
+            textContent += `Intent: ${flashcardsData.video_analysis.video_intent}\n\n`;
+            textContent += `FLASHCARDS\n`;
+            textContent += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            
+            flashcardsData.flashcards.forEach((card, index) => {
+                textContent += `QUESTION ${index + 1}\n`;
+                textContent += `${card.question}\n\n`;
+                textContent += `Timestamp: ${formatTime(card.timestamp)} | Related Quote: "${card.related_quote}"\n\n`;
+                textContent += `Options:\n`;
+                Object.entries(card.options).forEach(([key, value]) => {
+                    if (key === card.correct_answer) {
+                        textContent += `  ${key}. ${value} ✓ [CORRECT]\n`;
+                    } else {
+                        textContent += `  ${key}. ${value}\n`;
+                    }
+                });
+                textContent += `\nExplanation: ${card.explanation}\n`;
+                textContent += `\n────────────────────────────────────────\n\n`;
+            });
+            
+            try {
+                // Use modern clipboard API
+                await navigator.clipboard.writeText(textContent);
+                
+                // Open Google Docs
+                const googleDocsUrl = 'https://docs.google.com/document/create';
+                window.open(googleDocsUrl, '_blank');
+                
+                // Show success message with a small delay
+                setTimeout(() => {
+                    alert('✅ Flashcards copied to clipboard!\n\nIn the new Google Doc window:\n1. Click anywhere in the document\n2. Press Ctrl+V (or Cmd+V on Mac) to paste\n3. The flashcards will appear with formatting!');
+                }, 500);
+                
+            } catch (err) {
+                // Fallback to old method if clipboard API fails
+                const textarea = document.createElement('textarea');
+                textarea.value = textContent;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    window.open('https://docs.google.com/document/create', '_blank');
+                    setTimeout(() => {
+                        alert('✅ Flashcards copied to clipboard!\n\nIn the new Google Doc window:\n1. Click anywhere in the document\n2. Press Ctrl+V (or Cmd+V on Mac) to paste');
+                    }, 500);
+                } catch (fallbackErr) {
+                    alert('Unable to copy to clipboard. Please use the Download option instead.');
+                } finally {
+                    document.body.removeChild(textarea);
+                }
+            }
         }
     </script>
 </body>
