@@ -813,7 +813,7 @@
             containerDiv.innerHTML = '';
             
             try {
-                const response = await fetch(`http://localhost:8888/api/transcript/${videoId}`);
+                const response = await fetch(`/api/transcript/${videoId}`);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -888,7 +888,7 @@
                                 <code style="background: #eee; padding: 2px 5px;">poetry run python hermes_server.py</code>
                             </li>
                             <li>Open your browser to:<br>
-                                <code style="background: #eee; padding: 2px 5px;">http://localhost:8888</code>
+                                <code style="background: #eee; padding: 2px 5px;">http://localhost:8590</code>
                             </li>
                             <li>Enter a YouTube video ID and click "Fetch Transcript"</li>
                         </ol>
@@ -1051,7 +1051,7 @@
                 updateLoadingStep(3);
                 loadingStatus.textContent = 'AI is analyzing the video content...';
                 
-                const response = await fetch('http://localhost:8888/api/flashcards', {
+                const response = await fetch('/api/flashcards', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

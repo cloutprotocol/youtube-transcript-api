@@ -23,8 +23,8 @@ COPY history.html .
 # Create a .env file placeholder
 RUN touch .env
 
-# Expose port 8888
-EXPOSE 8888
+# Expose port 8590
+EXPOSE 8590
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1

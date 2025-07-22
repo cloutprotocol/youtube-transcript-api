@@ -20,7 +20,7 @@ docker-compose up -d
 ```
 
 ### 4. Access the application
-Open your browser to: http://localhost:8888
+Open your browser to: http://localhost:8590
 
 ## Deployment to Coolify
 
@@ -39,7 +39,7 @@ Open your browser to: http://localhost:8888
 1. In Coolify, create a new service
 2. Select "Dockerfile" as the deployment method
 3. Point to your repository
-4. Set the port to `8888`
+4. Set the port to `8590`
 5. Add your environment variable:
    - Key: `GEMINI_API_KEY`
    - Value: Your Gemini API key
@@ -68,7 +68,7 @@ Open your browser to: http://localhost:8888
 Check logs: `docker-compose logs hermes`
 
 ### Can't access the application
-- Ensure port 8888 is not in use: `lsof -i :8888`
+- Ensure port 8590 is not in use: `lsof -i :8590`
 - Check if container is running: `docker ps`
 
 ### Flashcards not generating

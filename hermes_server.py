@@ -270,7 +270,7 @@ Make sure to return ONLY valid JSON, no additional text or formatting."""
             }
             self.wfile.write(json.dumps(response).encode())
 
-def run_server(port=8888):
+def run_server(port=8590):
     server_address = ('0.0.0.0', port)
     httpd = HTTPServer(server_address, TranscriptHandler)
     print(f"🚀 Hermes server running on http://0.0.0.0:{port}")
