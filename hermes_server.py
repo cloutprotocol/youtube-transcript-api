@@ -60,6 +60,11 @@ class TranscriptHandler(BaseHTTPRequestHandler):
         elif parsed_path.path.startswith('/api/transcript/'):
             video_id = parsed_path.path.split('/')[-1]
             self.serve_transcript(video_id)
+        elif parsed_path.path == '/api/client-fetcher.js':
+            self.serve_client_fetcher()
+        elif parsed_path.path.startswith('/api/metadata/'):
+            video_id = parsed_path.path.split('/')[-1]
+            self.serve_metadata(video_id)
         else:
             self.send_error(404, "File not found")
     
@@ -84,6 +89,111 @@ class TranscriptHandler(BaseHTTPRequestHandler):
                 self.wfile.write(file.read())
         except FileNotFoundError:
             self.send_error(404, f"{filename} not found")
+    
+    def serve_client_fetcher(self):
+        """Serve the client-side YouTube transcript fetcher JavaScript"""
+        self.send_response(200)
+        self.send_header('Content-type', 'application/javascript')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        
+        # Minified client-side fetcher
+        client_fetcher_code = '''
+class YouTubeClientFetcher {
+    async extractVideoId(url) {
+        const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    }
+
+    async fetchTranscript(videoUrl) {
+        try {
+            const videoId = await this.extractVideoId(videoUrl);
+            if (!videoId) throw new Error('Invalid YouTube URL');
+
+            // Fetch video page
+            const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`);
+            const html = await response.text();
+
+            // Extract player response
+            const match = html.match(/var ytInitialPlayerResponse = ({.+?});/);
+            if (!match) throw new Error('Could not extract player response');
+
+            const playerResponse = JSON.parse(match[1]);
+            const captionTracks = playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
+            
+            if (!captionTracks.length) throw new Error('No captions available');
+
+            // Find English or first available caption
+            const track = captionTracks.find(t => t.languageCode === 'en' || t.languageCode === 'en-US') || captionTracks[0];
+            
+            // Fetch caption XML
+            const captionResponse = await fetch(track.baseUrl);
+            const captionXml = await captionResponse.text();
+
+            // Parse XML
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(captionXml, 'text/xml');
+            const textElements = xmlDoc.getElementsByTagName('text');
+
+            const transcript = [];
+            for (let i = 0; i < textElements.length; i++) {
+                const element = textElements[i];
+                transcript.push({
+                    text: element.textContent
+                        .replace(/&amp;/g, '&')
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>')
+                        .replace(/&quot;/g, '"')
+                        .replace(/&#39;/g, "'"),
+                    start: parseFloat(element.getAttribute('start')),
+                    duration: parseFloat(element.getAttribute('dur'))
+                });
+            }
+
+            return {
+                success: true,
+                video_id: videoId,
+                transcript: transcript,
+                language: track.name.simpleText,
+                language_code: track.languageCode
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message
+            };
+        }
+    }
+}
+'''
+        self.wfile.write(client_fetcher_code.encode())
+    
+    def serve_metadata(self, video_id):
+        """Serve just the video metadata (title, channel) without transcript"""
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        
+        try:
+            metadata = self.get_video_metadata(video_id)
+            response = {
+                'success': True,
+                'title': metadata['title'],
+                'channel': metadata['channel'],
+                'video_id': video_id
+            }
+        except Exception as e:
+            response = {
+                'success': False,
+                'error': str(e),
+                'title': f'Video {video_id}',
+                'channel': 'Unknown Channel',
+                'video_id': video_id
+            }
+        
+        self.wfile.write(json.dumps(response).encode())
     
     def get_video_metadata(self, video_id):
         """Fetch video title and metadata from YouTube"""
@@ -162,10 +272,21 @@ class TranscriptHandler(BaseHTTPRequestHandler):
                 'error': 'No transcript found for this video'
             }
         except Exception as e:
-            response = {
-                'success': False,
-                'error': str(e)
-            }
+            error_str = str(e).lower()
+            # Check if it's an IP blocking error
+            if 'blocked' in error_str or 'ip' in error_str or 'cloud' in error_str:
+                response = {
+                    'success': False,
+                    'error': str(e),
+                    'require_client_fetch': True,
+                    'video_id': video_id,
+                    'metadata': metadata
+                }
+            else:
+                response = {
+                    'success': False,
+                    'error': str(e)
+                }
         
         self.wfile.write(json.dumps(response).encode())
     

@@ -813,25 +813,50 @@
             containerDiv.innerHTML = '';
             
             try {
-                const response = await fetch(`/api/transcript/${videoId}`);
-                const data = await response.json();
+                // Load client-side fetcher if not already loaded
+                if (!window.YouTubeClientFetcher) {
+                    const script = document.createElement('script');
+                    script.src = '/api/client-fetcher.js';
+                    await new Promise((resolve, reject) => {
+                        script.onload = resolve;
+                        script.onerror = reject;
+                        document.head.appendChild(script);
+                    });
+                }
                 
-                if (data.success) {
+                // Always use client-side fetch
+                const fetcher = new YouTubeClientFetcher();
+                const clientResult = await fetcher.fetchTranscript(`https://www.youtube.com/watch?v=${videoId}`);
+                
+                // Get metadata from server (this is lightweight and won't be blocked)
+                let metadata = { title: '', channel: '', video_id: videoId };
+                try {
+                    const metadataResponse = await fetch(`/api/metadata/${videoId}`);
+                    const metadataData = await metadataResponse.json();
+                    if (metadataData.success) {
+                        metadata = metadataData;
+                    }
+                } catch (e) {
+                    // If metadata fetch fails, use defaults
+                    console.log('Could not fetch metadata, using defaults');
+                }
+                
+                if (clientResult.success) {
                     statusDiv.innerHTML = '<p style="color: green; font-weight: bold;">Transcript loaded successfully!</p>';
                     
                     // Display video info
                     document.getElementById('videoInfo').style.display = 'block';
-                    document.getElementById('videoTitle').textContent = data.title;
-                    document.getElementById('videoChannel').textContent = `by ${data.channel}`;
+                    document.getElementById('videoTitle').textContent = metadata.title || `Video ${videoId}`;
+                    document.getElementById('videoChannel').textContent = metadata.channel ? `by ${metadata.channel}` : '';
                     
                     // Update page title
-                    document.title = `${data.title} - Hermes Transcript Viewer`;
+                    document.title = `${metadata.title || 'Video'} - Hermes Transcript Viewer`;
                     
                     // Store metadata for download
                     window.videoMetadata = {
-                        title: data.title,
-                        channel: data.channel,
-                        video_id: data.video_id
+                        title: metadata.title || `Video ${videoId}`,
+                        channel: metadata.channel || 'Unknown Channel',
+                        video_id: videoId
                     };
                     
                     // Initialize currentVideoData
@@ -871,9 +896,9 @@
                         }, 1000);
                     }
                     
-                    displayTranscript(data.transcript);
+                    displayTranscript(clientResult.transcript);
                 } else {
-                    statusDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                    statusDiv.innerHTML = `<p class="error">Error: ${clientResult.error}</p>`;
                     document.getElementById('videoInfo').style.display = 'none';
                     document.getElementById('videoContainer').style.display = 'none';
                 }
